@@ -1,4 +1,5 @@
 <?php
+$php_start = microtime(true);
 $x_value = "Портфоліо";
 $y_value = "2025. Дарина Дзюбенко";
 
@@ -41,7 +42,7 @@ function isActivePage($page) {
     <title><?php echo $x_value; ?></title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-php-time="<?php echo round((microtime(true) - $php_start)*1000, 2); ?>">
     <div class="container">
         <div class="block b1">
             Ласкаво прошу на мою першу лабораторну з PHP!
@@ -64,5 +65,6 @@ function isActivePage($page) {
             <div class="block y"><?php echo $y_value; ?></div>
         </div>
     </div>
+    <script src="lab.js"></script>
 </body>
 </html>
