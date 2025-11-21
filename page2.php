@@ -43,7 +43,7 @@ try {
 
 $db_time_ms = round((microtime(true) - $db_start_time) * 1000, 2); 
 
-// 6. Функція buildHtmlFromJson (залишається без змін)
+// 6. Функція buildHtmlFromJson
 function buildHtmlFromJson($json_string) {
     $data = json_decode($json_string, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
@@ -94,38 +94,47 @@ $php_gen_time_ms = round($php_total_time_ms - $db_time_ms, 2);
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo strip_tags($page_data['x']); ?></title>
+    <title>Лаб 4 - Перегляд (Page 2)</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body 
-    data-php-gen-time="<?php echo $php_gen_time_ms; ?>" 
-    data-db-time="<?php echo $db_time_ms; ?>"
-    data-page-name="<?php echo $page_name; ?>">
-    
+<body>
     <div class="container">
-        <div class="block b1">
-            <?php echo $page_data['b1']; ?>
+        <div class="block b1">Лабораторна робота №4. Клієнтська частина</div>
+        <div class="block x">Page 2</div>
+
+        <div class="block b2">
+            <p><strong>Режим перегляду.</strong></p>
+            <p>Ця сторінка автоматично синхронізується з сервером кожні 3 секунди.</p>
         </div>
-        <div class="block x"><?php echo $page_data['x']; ?></div>
-        <div class="block b2"><?php echo $page_data['b2']; ?></div>
         
         <div class="block b3 menu">
-            <h3>Меню</h3>
-            <ul>
-                <?php foreach ($menu as $link => $name) {
-                    $activeClass = isActivePage($link) ? 'active' : '';
-                    echo "<li><a href='$link' class='$activeClass'>$name</a></li>";
-                } ?>
-            </ul>
+             <h3>Меню</h3>
+             <ul>
+                <li><a href="index.php">Редактор (Page 1)</a></li>
+                <li><a href="page2.php" class="active">Перегляд (Page 2)</a></li>
+             </ul>
         </div>
         
-        <div class="block b4"><?php echo $page_data['b4']; ?></div>
-        <div class="block b5"><?php echo $page_data['b5']; ?></div>
+        <div class="block b4">
+            <h3>Інтерактивний блок (Collapse)</h3>
+            
+            <div id="collapse-root" class="collapse-container">
+                <em>Завантаження даних...</em>
+            </div>
+
+            <div style="margin-top:10px; font-size: 0.8em; color: gray;">
+                Статус: <span id="last-update">Очікування...</span>
+            </div>
+        </div>
+
+        <div class="block b5">Рекламний блок...</div>
+        
         <div class="block b6">
-            <?php echo $page_data['b6']; ?>
-            <div class="block y"><?php echo $page_data['y']; ?></div>
+            <p>Футер сайту</p>
+            <div class="block y">2025. Дарина Дзюбенко</div>
         </div>
     </div>
+
     <script src="lab.js"></script>
 </body>
 </html>

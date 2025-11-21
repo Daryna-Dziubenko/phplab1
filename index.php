@@ -103,38 +103,50 @@ $php_gen_time_ms = round($php_total_time_ms - $db_time_ms, 2);
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo strip_tags($page_data['x']); ?></title>
+    <title>Лаб 4 - Редактор (Page 1)</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body 
-    data-php-gen-time="<?php echo $php_gen_time_ms; ?>" 
-    data-db-time="<?php echo $db_time_ms; ?>"
-    data-page-name="<?php echo $page_name; ?>">
-    
+<body>
     <div class="container">
-        <div class="block b1">
-            <?php echo $page_data['b1']; ?>
+        <div class="block b1">Лабораторна робота №4. Варіант 2 (Collapse)</div>
+        <div class="block x">Page 1</div>
+
+        <div class="block b2">
+            <p><strong>Панель адміністратора.</strong></p>
+            <p>Додайте секції у центральному блоці, введіть заголовок та текст, потім натисніть "Зберегти".</p>
         </div>
-        <div class="block x"><?php echo $page_data['x']; ?></div>
-        <div class="block b2"><?php echo $page_data['b2']; ?></div>
         
         <div class="block b3 menu">
-            <h3>Меню</h3>
-            <ul>
-                <?php foreach ($menu as $link => $name) {
-                    $activeClass = isActivePage($link) ? 'active' : '';
-                    echo "<li><a href='$link' class='$activeClass'>$name</a></li>";
-                } ?>
-            </ul>
+             <h3>Меню</h3>
+             <ul>
+                <li><a href="index.php" class="active">Редактор (Page 1)</a></li>
+                <li><a href="page2.php">Перегляд (Page 2)</a></li>
+             </ul>
         </div>
         
-        <div class="block b4"><?php echo $page_data['b4']; ?></div>
-        <div class="block b5"><?php echo $page_data['b5']; ?></div>
+        <div class="block b4">
+            <h3>Конструктор Collapse</h3>
+            
+            <div id="builder-container"></div>
+
+            <div style="margin-top: 15px;">
+                <button class="btn btn-add" id="btn-add-row">+ Додати секцію</button>
+            </div>
+            <hr>
+            <div>
+                <button class="btn btn-save" id="btn-save-server">Зберегти на сервер (AJAX)</button>
+                <span id="status-msg" style="margin-left: 10px; font-weight: bold;"></span>
+            </div>
+        </div>
+
+        <div class="block b5">Додаткова інформація...</div>
+        
         <div class="block b6">
-            <?php echo $page_data['b6']; ?>
-            <div class="block y"><?php echo $page_data['y']; ?></div>
+            <p>Футер сайту</p>
+            <div class="block y">2025</div>
         </div>
     </div>
+
     <script src="lab.js"></script>
 </body>
 </html>
