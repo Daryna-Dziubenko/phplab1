@@ -85,7 +85,8 @@ $menu = [
     "page2.php" => "Про нас",
     "page3.php" => "Послуги",
     "page4.php" => "Портфоліо",
-    "page5.php" => "Контакти"
+    "page5.php" => "Контакти",
+    "lab5.php"  => "Лаба 5"
 ];
 function isActivePage($page) {
     return (basename($_SERVER['PHP_SELF']) == $page) ? 'active' : '';
