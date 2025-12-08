@@ -1,5 +1,5 @@
 <?php
-require 'db_config.php';
+require 'db_config.php'; // Підключення до бд
 
 $php_start_total = microtime(true);
 
@@ -27,7 +27,7 @@ $db_start_time = microtime(true);
 try {
     $in_placeholders = implode(',', array_fill(0, count($block_ids), '?'));
     
-    $sql = "SELECT [block_id], [content] FROM [page_content] WHERE [page_name] = ? AND [block_id] IN ($in_placeholders)";
+    $sql = "SELECT block_id, content FROM page_content WHERE page_name = ? AND block_id IN ($in_placeholders)";
     
     $stmt = $pdo->prepare($sql);
     $params = array_merge([$page_name], $block_ids);
@@ -43,13 +43,18 @@ try {
 
 $db_time_ms = round((microtime(true) - $db_start_time) * 1000, 2); 
 
-// 6. Функція buildHtmlFromJson
+// Функція buildHtmlFromJson
 function buildHtmlFromJson($json_string) {
+    if (empty($json_string)) return ''; // Якщо пусто - повертаємо нічого
+
     $data = json_decode($json_string, true);
+
+    // Якщо це не JSON (старі дані з лаб 1-3), просто повертаємо текст як є
     if (json_last_error() !== JSON_ERROR_NONE) {
-        return 'Помилка читання даних';
+        return $json_string;
     }
     
+    // А якщо це JSON, то формуємо HTML
     $html = '';
     if (!empty($data['text'])) $html .= '<div>' . nl2br(htmlspecialchars($data['text'])) . '</div>';
     
@@ -63,7 +68,12 @@ function buildHtmlFromJson($json_string) {
     
     if (!empty($data['photo'])) $html .= '<img src="' . htmlspecialchars($data['photo']) . '" style="max-width:100%;max-height:200px;">';
     
-    return $html ?: '&nbsp;'; 
+    // Якщо це складний об'єкт Collapse (масив масивів), повертаємо нічого, 
+    if (is_array($data) && isset($data[0]['title'])) {
+        return ''; 
+    }
+    
+    return $html ?: $json_string; 
 }
 
 $page_data = [];
@@ -97,25 +107,34 @@ $php_gen_time_ms = round($php_total_time_ms - $db_time_ms, 2);
     <title>Лаб 4 - Перегляд (Page 2)</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-php-gen-time="<?php echo $php_gen_time_ms; ?>">
     <div class="container">
         <div class="block b1">Лабораторна робота №4. Клієнтська частина</div>
         <div class="block x">Page 2</div>
 
         <div class="block b2">
-            <p><strong>Режим перегляду.</strong></p>
-            <p>Ця сторінка автоматично синхронізується з сервером кожні 3 секунди.</p>
+            <?php echo $page_data['b2']; ?>
+            
+            <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid #ccc;">
+                <a href="index.php" class="btn btn-back" style="display:block; text-align:center;">← Повернутися на головну (Редактор)</a>
+            </div>
         </div>
         
         <div class="block b3 menu">
              <h3>Меню</h3>
              <ul>
-                <li><a href="index.php">Редактор (Page 1)</a></li>
-                <li><a href="page2.php" class="active">Перегляд (Page 2)</a></li>
+                <?php foreach ($menu as $link => $name) {
+                    $activeClass = isActivePage($link) ? 'active' : '';
+                    echo "<li><a href='$link' class='$activeClass'>$name</a></li>";
+                } ?>
              </ul>
         </div>
         
         <div class="block b4">
+            <?php echo $page_data['b4']; ?>
+
+            <hr style="border-top: 2px dashed #bbb; margin: 20px 0;">
+
             <h3>Інтерактивний блок (Collapse)</h3>
             
             <div id="collapse-root" class="collapse-container">
@@ -127,14 +146,14 @@ $php_gen_time_ms = round($php_total_time_ms - $db_time_ms, 2);
             </div>
         </div>
 
-        <div class="block b5">Рекламний блок...</div>
+        <div class="block b5"><?php echo $page_data['b5']; ?></div>
         
         <div class="block b6">
-            <p>Футер сайту</p>
-            <div class="block y">2025. Дарина Дзюбенко</div>
+            <?php echo $page_data['b6']; ?>
+            <div class="block y"><?php echo $page_data['y']; ?></div>
         </div>
     </div>
 
-    <script src="lab.js"></script>
+    <script src="lab.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

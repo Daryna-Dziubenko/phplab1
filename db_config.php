@@ -1,21 +1,18 @@
-// db_config.php - **ЗМІНИТИ**
 <?php
-$server_name = 'localhost\MSSQL_DEV_SERVER'; // Використовуйте повне ім'я сервера
-$db_name = 'lab_db';
-// **Для Windows Authentication встановлюємо порожні значення**
-$username = '';
-$password = '';
+$server_name = 'sql202.infinityfree.com';
+$db_name = 'if0_39952370_db_lab';
+$username = 'if0_39952370';
+$password = 'rQODDXfAzZThDu';
 
+// Налаштовую параметри драйвера PDO
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ];
 
 try {
-    // **IntegratedSecurity=SSPI** для Windows Authentication
-    // **TrustServerCertificate=true** для довіри сертифікату, як на скріншоті
-    $pdo = new PDO("sqlsrv:Server=$server_name;Database=$db_name;IntegratedSecurity=SSPI;TrustServerCertificate=true", $username, $password, $options);
+    $pdo = new PDO("mysql:host=$server_name;dbname=$db_name;charset=utf8mb4", $username, $password, $options);
 } catch (\PDOException $e) {
-    die("Помилка підключення до MS SQL Server: " . $e->getMessage());
+    die("Помилка підключення до MySQL: " . $e->getMessage());
 }
 ?>

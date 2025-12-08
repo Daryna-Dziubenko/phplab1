@@ -8,19 +8,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $page_name = $data['page_name'] ?? null;
     $block_id  = $data['block_id'] ?? null;
-    $content   = $data['content'] ?? null; // Це буде JSON рядок об'єкта Collapse
+    $content   = $data['content'] ?? null;
 
     if ($page_name && $block_id && $content) {
-        $sql = "
-            MERGE INTO [page_content] AS [target]
-            USING (VALUES (?, ?, ?)) AS [source] ([page_name], [block_id], [content])
-            ON ([target].[page_name] = [source].[page_name] AND [target].[block_id] = [source].[block_id])
-            WHEN MATCHED THEN
-                UPDATE SET [target].[content] = [source].[content]
-            WHEN NOT MATCHED THEN
-                INSERT ([page_name], [block_id], [content]) 
-                VALUES ([source].[page_name], [source].[block_id], [source].[content]);
-        ";
+        $sql = "INSERT INTO page_content (page_name, block_id, content) 
+                VALUES (?, ?, ?) 
+                ON DUPLICATE KEY UPDATE content = VALUES(content)";
         
         try {
             $stmt = $pdo->prepare($sql);

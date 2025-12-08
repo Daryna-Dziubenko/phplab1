@@ -1,12 +1,11 @@
 <?php
-
 require 'db_config.php';
 
 $php_start_total = microtime(true);
-
 $page_name = basename($_SERVER['PHP_SELF']);
 $block_ids = ['b1', 'x', 'b2', 'b4', 'b5', 'b6', 'y']; 
 
+// Твій оригінальний контент
 $default_content = [
     'b1' => 'Ласкаво прошу на мою першу лабораторну з PHP!',
     'x'  => 'Портфоліо',
@@ -33,9 +32,9 @@ $db_content = [];
 $db_start_time = microtime(true); 
 
 try {
+    // ВИПРАВЛЕНО: Прибрано квадратні дужки
     $in_placeholders = implode(',', array_fill(0, count($block_ids), '?'));
-    
-    $sql = "SELECT [block_id], [content] FROM [page_content] WHERE [page_name] = ? AND [block_id] IN ($in_placeholders)";
+    $sql = "SELECT block_id, content FROM page_content WHERE page_name = ? AND block_id IN ($in_placeholders)";
     
     $stmt = $pdo->prepare($sql);
     $params = array_merge([$page_name], $block_ids);
@@ -54,23 +53,20 @@ $db_time_ms = round((microtime(true) - $db_start_time) * 1000, 2);
 function buildHtmlFromJson($json_string) {
     $data = json_decode($json_string, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
-        return 'Помилка читання даних';
+        return $json_string;
     }
-    
+    if (is_array($data) && isset($data[0]['title'])) return $json_string;
+
     $html = '';
     if (!empty($data['text'])) $html .= '<div>' . nl2br(htmlspecialchars($data['text'])) . '</div>';
-    
     if (!empty($data['list']) && is_array($data['list'])) {
         $html .= '<ul>';
-        foreach ($data['list'] as $item) {
-            $html .= '<li>' . htmlspecialchars($item) . '</li>';
-        }
+        foreach ($data['list'] as $item) $html .= '<li>' . htmlspecialchars($item) . '</li>';
         $html .= '</ul>';
     }
-    
     if (!empty($data['photo'])) $html .= '<img src="' . htmlspecialchars($data['photo']) . '" style="max-width:100%;max-height:200px;">';
     
-    return $html ?: '&nbsp;'; 
+    return $html ?: $json_string; 
 }
 
 $page_data = [];
@@ -110,9 +106,7 @@ $php_gen_time_ms = round($php_total_time_ms - $db_time_ms, 2);
     data-page-name="<?php echo $page_name; ?>">
     
     <div class="container">
-        <div class="block b1">
-            <?php echo $page_data['b1']; ?>
-        </div>
+        <div class="block b1"><?php echo $page_data['b1']; ?></div>
         <div class="block x"><?php echo $page_data['x']; ?></div>
         <div class="block b2"><?php echo $page_data['b2']; ?></div>
         
@@ -133,6 +127,6 @@ $php_gen_time_ms = round($php_total_time_ms - $db_time_ms, 2);
             <div class="block y"><?php echo $page_data['y']; ?></div>
         </div>
     </div>
-    <script src="lab.js"></script>
+    <script src="lab.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>
